@@ -1,0 +1,50 @@
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+.al-root{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a,#1e1b4b,#0f172a);padding:24px 16px;position:relative;overflow:hidden;font-family:'Inter','Segoe UI',sans-serif}
+.al-blob{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
+.al-b1{width:420px;height:420px;background:rgba(239,68,68,.18);top:-120px;left:-120px}
+.al-b2{width:380px;height:380px;background:rgba(220,38,38,.12);bottom:-80px;right:-80px}
+
+.al-card{position:relative;z-index:1;width:100%;max-width:860px;background:rgba(255,255,255,.97);border-radius:26px;box-shadow:0 32px 80px rgba(0,0,0,.38);display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+
+/* Left */
+.al-left{background:linear-gradient(160deg,#1e1b4b,#7f1d1d,#991b1b);padding:44px 32px;display:flex;flex-direction:column;gap:20px;position:relative;overflow:hidden}
+.al-left::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.06)}
+.al-left-logo{width:52px;height:52px;background:linear-gradient(135deg,#ef4444,#dc2626);border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(239,68,68,.45)}
+.al-left-logo svg{width:26px;height:26px;color:#fff}
+.al-left-title{font-size:24px;font-weight:800;color:#fff}
+.al-left-sub{font-size:12.5px;color:#fca5a5;line-height:1.6}
+.al-perks{display:flex;flex-direction:column;gap:11px}
+.al-perk{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 13px;font-size:12.5px;color:#fecaca;font-weight:500}
+.al-perk-check{display:flex;align-items:center;color:#fca5a5;flex-shrink:0}
+.al-perk-check svg{width:13px;height:13px}
+.al-back{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fecaca;font-size:12px;font-weight:500;padding:8px 14px;border-radius:9px;cursor:pointer;margin-top:auto;transition:all .15s;width:fit-content}
+.al-back:hover{background:rgba(255,255,255,.18);color:#fff}
+
+/* Right */
+.al-right{padding:42px 36px;display:flex;flex-direction:column;gap:16px}
+.al-form-icon{width:52px;height:52px;background:linear-gradient(135deg,#ef4444,#dc2626);border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(239,68,68,.35);margin:0 auto}
+.al-form-icon svg{width:26px;height:26px;color:#fff}
+.al-form-title{font-size:22px;font-weight:800;color:#0f172a;text-align:center}
+.al-form-sub{font-size:12px;color:#64748b;text-align:center;margin-top:-8px}
+.al-error{background:#fee2e2;border:1px solid #fecaca;color:#dc2626;padding:10px 14px;border-radius:9px;font-size:12px;font-weight:500}
+.al-form{display:flex;flex-direction:column;gap:14px}
+.al-field{display:flex;flex-direction:column;gap:6px}
+.al-label{font-size:12px;font-weight:600;color:#374151}
+.al-wrap{position:relative;display:flex;align-items:center}
+.al-ico{position:absolute;left:12px;display:flex;align-items:center;color:#94a3b8;pointer-events:none}
+.al-ico svg{width:16px;height:16px}
+.al-input{width:100%;padding:12px 14px 12px 38px;border:2px solid #e5e7eb;border-radius:10px;font-size:13px;outline:none;color:#111827;background:#fff;transition:all .18s;font-family:inherit}
+.al-input:focus{border-color:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.1)}
+.al-input::placeholder{color:#9ca3af}
+.al-eye{position:absolute;right:12px;background:none;border:none;cursor:pointer;color:#94a3b8;display:flex;align-items:center;padding:0}
+.al-eye svg{width:16px;height:16px}
+.al-eye:hover{color:#374151}
+.al-submit{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(239,68,68,.35);transition:all .18s;margin-top:2px}
+.al-submit:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 28px rgba(239,68,68,.45)}
+.al-submit:disabled{opacity:.7;cursor:not-allowed}
+.al-spin{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:al-spin .7s linear infinite}
+@keyframes al-spin{to{transform:rotate(360deg)}}
+.al-others{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:4px;border-top:1px solid #f1f5f9;font-size:12px;color:#94a3b8}
+.al-others button{background:#f8fafc;border:1px solid #e2e8f0;color:#374151;font-size:12px;font-weight:600;padding:5px 12px;border-radius:7px;cursor:pointer;transition:all .15s}
+.al-others button:hover{border-color:#ef4444;color:#ef4444;background:#fff}
+@media(max-width:640px){.al-card{grid-template-columns:1fr}.al-left{display:none}.al-right{padding:28px 22px}}

@@ -1,0 +1,126 @@
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+.asb-root{
+  width:224px;min-width:224px;height:100vh;
+  background:linear-gradient(175deg,#0d1b2a 0%,#0f2744 55%,#0d1b2a 100%);
+  display:flex;flex-direction:column;
+  transition:width .22s ease,min-width .22s ease;
+  overflow:hidden;flex-shrink:0;
+  box-shadow:3px 0 20px rgba(0,0,0,.28);
+  -webkit-font-smoothing:antialiased;
+}
+.asb-closed{width:62px;min-width:62px}
+
+/* Brand */
+.asb-brand{
+  display:flex;align-items:center;gap:9px;
+  padding:14px 13px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  flex-shrink:0;
+}
+.asb-brand-logo{
+  width:36px;height:36px;flex-shrink:0;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 12px rgba(99,102,241,.4);
+}
+.asb-brand-name{font-size:13px;font-weight:700;color:#fff;white-space:nowrap;letter-spacing:-.1px}
+.asb-brand-sub{font-size:9.5px;color:#64748b;white-space:nowrap;margin-top:1px}
+
+/* Profile */
+.asb-profile{
+  display:flex;align-items:center;gap:9px;
+  padding:11px 13px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.03);
+  flex-shrink:0;
+}
+.asb-profile-mini{justify-content:center;padding:10px 0}
+.asb-closed .asb-profile{justify-content:center;padding:10px 0}
+
+.asb-ava-wrap{
+  position:relative;
+  width:40px;height:40px;
+  border-radius:50%;cursor:pointer;flex-shrink:0;
+}
+.asb-ava-img{
+  width:40px;height:40px;border-radius:50%;
+  object-fit:cover;border:2px solid #6366f1;display:block;
+}
+.asb-ava-init{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#fff;
+  border:2px solid rgba(99,102,241,.4);
+}
+.asb-ava-overlay{
+  position:absolute;inset:0;border-radius:50%;
+  background:rgba(0,0,0,.55);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;
+}
+.asb-ava-wrap:hover .asb-ava-overlay{opacity:1}
+
+.asb-name{font-size:12px;font-weight:600;color:#f1f5f9;white-space:nowrap}
+.asb-role{font-size:9.5px;color:#64748b;white-space:nowrap;margin-top:1px}
+.asb-online{display:flex;align-items:center;gap:4px;font-size:9.5px;color:#4ade80;margin-top:3px;white-space:nowrap}
+.asb-dot{
+  width:5px;height:5px;border-radius:50%;background:#4ade80;
+  animation:asb-pulse 2s infinite;
+}
+@keyframes asb-pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.asb-divider{height:1px;background:rgba(255,255,255,.07);flex-shrink:0}
+
+/* Nav */
+.asb-nav{
+  flex:1;padding:6px 0;
+  overflow-y:auto;overflow-x:hidden;
+  display:flex;flex-direction:column;gap:1px;
+}
+.asb-nav::-webkit-scrollbar{width:2px}
+.asb-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:99px}
+
+.asb-item{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 12px;
+  margin:0 7px;border-radius:8px;
+  border:none;background:transparent;
+  cursor:pointer;font-size:12px;
+  font-family:'Inter','Segoe UI',system-ui,sans-serif;
+  color:#64748b;white-space:nowrap;
+  transition:all .14s;
+  position:relative;text-align:left;
+  width:calc(100% - 14px);
+  -webkit-font-smoothing:antialiased;
+}
+.asb-closed .asb-item{
+  justify-content:center;padding:10px 0;
+  margin:0 5px;width:calc(100% - 10px);
+}
+.asb-item:hover{background:rgba(255,255,255,.07);color:#cbd5e1}
+.asb-active{
+  background:linear-gradient(90deg,rgba(99,102,241,.24),rgba(139,92,246,.1))!important;
+  color:#a5b4fc!important;font-weight:600;
+}
+.asb-lbl{font-size:12px;font-weight:500}
+.asb-active .asb-lbl{font-weight:600}
+.asb-pip{
+  position:absolute;right:9px;
+  width:5px;height:5px;border-radius:50%;
+  background:#6366f1;box-shadow:0 0 5px rgba(99,102,241,.8);
+}
+
+/* Logout */
+.asb-logout{
+  color:#f87171!important;
+  margin:3px 7px 9px!important;
+  width:calc(100% - 14px)!important;
+}
+.asb-closed .asb-logout{
+  justify-content:center!important;padding:10px 0!important;
+  margin:3px 5px 9px!important;width:calc(100% - 10px)!important;
+}
+.asb-logout:hover{background:rgba(248,113,113,.1)!important;color:#fca5a5!important}
