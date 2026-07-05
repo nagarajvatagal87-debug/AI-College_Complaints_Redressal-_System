@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Stafflogin.css";
+import "./stafflogin.css";
 
 export default function StaffLogin() {
   const navigate = useNavigate();
