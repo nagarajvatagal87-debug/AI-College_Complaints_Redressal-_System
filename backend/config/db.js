@@ -10,3 +10,7 @@ export const db = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 });
+console.log("HOST:", process.env.DB_HOST);
+console.log("PORT:", process.env.DB_PORT);
+console.log("USER:", process.env.DB_USER);
+console.log("DB:", process.env.DB_NAME);
