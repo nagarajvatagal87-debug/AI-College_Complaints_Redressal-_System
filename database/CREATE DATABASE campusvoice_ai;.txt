@@ -1,0 +1,331 @@
+CREATE DATABASE campusvoice_ai;
+SHOW DATABASES;
+USE campusvoice_ai;
+
+CREATE TABLE students (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    mobile VARCHAR(10),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+select *from students;
+DESC students;
+
+CREATE TABLE complaints (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    student_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    category VARCHAR(100),
+    priority VARCHAR(50),
+    status VARCHAR(50) DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (student_id)
+    REFERENCES students(id)
+    ON DELETE CASCADE
+);
+select *from complaints;
+
+CREATE TABLE grievance_types (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+INSERT INTO grievance_types (name) VALUES
+('Hostel'),
+('Transport'),
+('Infrastructure'),
+('Faculty'),
+('Library'),
+('Examination');
+SHOW TABLES;
+USE campusvoice_ai;
+
+CREATE TABLE staff (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    grievance_type_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (grievance_type_id)
+    REFERENCES grievance_types(id)
+    ON DELETE CASCADE
+);
+select *from staff;
+ALTER TABLE complaints
+ADD grievance_type_id INT,
+ADD status VARCHAR(50) DEFAULT 'Pending';
+ALTER TABLE complaints
+ADD COLUMN image VARCHAR(255);
+DESC complaints;
+ALTER TABLE complaints
+ADD COLUMN grievance_type_id INT;
+DESC students;
+ALTER TABLE complaints
+ADD COLUMN rating INT;
+show create table students;
+SHOW DATABASES;
+describe students;
+SELECT * FROM students;
+SELECT * FROM complaints;
+
+CREATE TABLE admin (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+DESC admin;
+SELECT * FROM admin;
+INSERT INTO admin(username, password)
+VALUES(
+'admin',
+'$2b$10$fPJL7sezFuAsuNTe3E7wdetCczwO5jZUI5oL371g27RNtYFHlH0/K'
+
+UPDATE admin
+SET password = '$2b$10$fPJL7sezFuAsuNTe3E7wdetCczwO5jZUI5oL371g27RNtYFHlH0/K'
+WHERE username = 'admin';
+INSERT INTO admin(username, password)
+VALUES(
+'admin',
+'$2b$10$jr9iDL.A7c/aXfj5qF2mXuKtF/ML1t9ckXtTI9X55N1ndF1VJIDSG'
+);
+SELECT * FROM staff;
+UPDATE staff
+SET password = '$2b$10$CeHG7tdiPwL0Em1MWLXQaONM1C4gQhwQqIx8a.CZLCsnrBd1jR466'
+WHERE username = 'infra_staff';
+UPDATE staff
+SET password = '$2b$10$fPJL7sezFuAsuNTe3E7wdetCczwO5jZUI5oL371g27RNtYFHlH0/K'
+WHERE username = 'infra_staff';
+SELECT username, password
+FROM staff
+WHERE username = 'infra_staff';
+
+ALTER TABLE complaints
+ADD feedback TEXT;
+DESC complaints;
+SELECT id,title,rating,feedback
+FROM complaints;
+UPDATE complaints
+SET rating = NULL,
+    feedback = NULL
+WHERE id = 4;
+ALTER TABLE complaints
+ADD sentiment VARCHAR(20);
+ALTER TABLE complaints
+ADD assigned_to VARCHAR(100);
+
+ALTER TABLE complaints
+ADD staff_remark TEXT;
+SELECT * FROM staff;
+UPDATE staff
+SET email = 'staff',
+    password = 'staff123'
+WHERE id = 1;
+UPDATE staff
+SET username='staff',
+    password='$2b$10$vSxtmOfxZjXd1RZamlK1HOH9arJVx16djEbgsC/sn3dSVJyCdRqve'
+WHERE id=1;
+ALTER TABLE complaints
+ADD staff_remark TEXT;
+DESCRIBE complaints;
+SELECT id, title, status, staff_remark
+FROM complaints;
+SELECT id,title,assigned_to
+FROM complaints;
+SELECT * FROM staff;
+
+SELECT
+id,
+title,
+description,
+status,
+assigned_to,
+staff_remark,
+rating,
+feedback
+FROM complaints
+WHERE student_id = ?
+SELECT *
+FROM complaints;
+
+SELECT
+id,
+title,
+assigned_to,
+staff_remark
+FROM complaints;
+
+INSERT INTO staff
+(name, username, email, password, grievance_type_id)
+VALUES
+('Infrastructure Staff','infra','infra@gmail.com','123456',1),
+('Electrical Staff','electrical','electrical@gmail.com','123456',1),
+('Transport Staff','transport','transport@gmail.com','123456',1),
+('Academic Staff','academic','academic@gmail.com','123456',1);
+DESC staff;
+select *from staff;
+SELECT * FROM grievance_types;
+
+SELECT username,password
+FROM staff;
+UPDATE staff
+SET password = '$2b$10$pIog27NV.0iAJxxjvFmAIeRfR7GUKC/jY0AtXfuYF43TykTrGkK3u'
+WHERE username IN (
+'infra',
+'electrical',
+'transport',
+'academic'
+);
+SELECT id,title,assigned_to
+FROM complaints;
+CREATE TABLE notifications (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    staff_name VARCHAR(100),
+    message TEXT,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+SELECT * FROM notifications;
+SELECT id,title,assigned_to
+FROM complaints;
+SELECT id,title,assigned_to
+FROM complaints
+WHERE id = 6;
+SELECT id, image
+FROM complaints
+WHERE id = 17;
+
+DESCRIBE complaints;
+SELECT
+  c.id,
+  s.name AS student_name,
+  c.title,
+  c.category,
+  c.priority,
+  c.status,
+  c.assigned_to,
+  c.created_at
+FROM complaints c
+JOIN students s
+ON c.student_id = s.id
+ORDER BY c.created_at DESC;
+SELECT id, title, assigned_to
+FROM complaints;
+DESCRIBE complaints;
+
+ALTER TABLE complaints
+ADD COLUMN assigned_at DATETIME NULL,
+ADD COLUMN updated_at DATETIME NULL,
+ADD COLUMN resolved_at DATETIME NULL;
+SELECT
+id,
+assigned_to,
+assigned_at,
+updated_at,
+resolved_at
+FROM complaints;
+ALTER TABLE complaints
+ADD COLUMN updated_at DATETIME NULL;
+
+SELECT * FROM complaints;
+ALTER TABLE notifications
+  ADD COLUMN type VARCHAR(20) DEFAULT 'admin',
+  ADD COLUMN complaint_id INT DEFAULT NULL;
+  
+ALTER TABLE complaints ADD COLUMN inprogress_at DATETIME NULL;
+ALTER TABLE complaints ADD COLUMN location VARCHAR(255) NULL;
+  ALTER TABLE staff ADD COLUMN role VARCHAR(100) NULL;
+  UPDATE staff
+SET role = 'Infrastructure Staff'
+WHERE name = 'Infrastructure Staff';
+
+UPDATE staff
+SET role = 'Electrical Staff'
+WHERE name = 'Electrical Staff';
+
+UPDATE staff
+SET role = 'Transport Staff'
+WHERE name = 'Transport Staff';
+
+UPDATE staff
+SET role = 'Academic Staff'
+WHERE name = 'Academic Staff';
+
+SELECT id, name, role FROM staff;
+
+SELECT id, name, role FROM staff;
+DESCRIBE complaints;
+DESCRIBE notifications;
+
+SELECT * FROM staff;
+SET SQL_SAFE_UPDATES = 0;
+ALTER TABLE staff
+ADD COLUMN role VARCHAR(100) NULL;
+UPDATE staff SET role = 'Infrastructure Staff' WHERE id = 1;
+UPDATE staff SET role = 'Infrastructure Staff' WHERE id = 5;
+UPDATE staff SET role = 'Electrical Staff' WHERE id = 6;
+UPDATE staff SET role = 'Transport Staff' WHERE id = 7;
+UPDATE staff SET role = 'Academic Staff' WHERE id = 8;
+
+SELECT * FROM notifications LIMIT 5;
+SET SQL_SAFE_UPDATES = 0;
+
+INSERT INTO staff (name, username, email, password, grievance_type_id, role) VALUES
+('Maintenance Staff', 'maintenance', 'maintenance@gmail.com', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, 'Maintenance Staff'),
+('Library Staff',     'library',     'library@gmail.com',     '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, 'Library Staff'),
+('Hostel Staff',      'hostel',      'hostel@gmail.com',      '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, 'Hostel Staff'),
+('Lab Staff',         'lab',         'lab@gmail.com',         '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, 'Lab Staff'),
+('Sports Staff',      'sports',      'sports@gmail.com',      '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, 'Sports Staff'),
+('Canteen Staff',     'canteen',     'canteen@gmail.com',     '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 1, 'Canteen Staff');
+
+
+INSERT INTO staff (name, username, email, password, grievance_type_id, role) 
+VALUES ('Hostel Staff', 'hostel', 'hostel@gmail.com', '$2b$10$R3OaD3NjBB9WgcIhP4YZaOznDnTmMHQJRxAkyow4r.zjVGlBsx5ou', 1, 'Hostel Staff');
+SELECT id, name, username, role FROM staff;
+INSERT INTO staff (name, username, email, password, grievance_type_id, role) 
+VALUES ('Lab Staff', 'lab', 'lab@gmail.com', '$2b$10$R3OaD3NjBB9WgcIhP4YZaOznDnTmMHQJRxAkyow4r.zjVGlBsx5ou', 1, 'Lab Staff');
+SELECT id, name, username FROM staff ORDER BY id;
+
+UPDATE staff 
+SET password = '$2b$10$KDwJ9gcibIgdRr603amrW.1Swz1/MYIoz.ItBJ2YM4bfp5K1oGKGy' 
+WHERE username = 'lab';
+UPDATE staff 
+SET password = '$2b$10$KDwJ9gcibIgdRr603amrW.1Swz1/MYIoz.ItBJ2YM4bfp5K1oGKGy' 
+WHERE username = 'sports';
+UPDATE staff 
+SET password = '$2b$10$KDwJ9gcibIgdRr603amrW.1Swz1/MYIoz.ItBJ2YM4bfp5K1oGKGy' 
+WHERE username = 'canteen';
+UPDATE staff 
+SET password = '$2b$10$KDwJ9gcibIgdRr603amrW.1Swz1/MYIoz.ItBJ2YM4bfp5K1oGKGy' 
+WHERE username = 'hostel';
+UPDATE staff 
+SET password = '$2b$10$KDwJ9gcibIgdRr603amrW.1Swz1/MYIoz.ItBJ2YM4bfp5K1oGKGy' 
+WHERE username = 'maintenance';
+
+SET SQL_SAFE_UPDATES = 0;
+DELETE FROM notifications;
+DELETE FROM complaints;
+ALTER TABLE complaints AUTO_INCREMENT = 1;
+ALTER TABLE notifications AUTO_INCREMENT = 1;
+SET SQL_SAFE_UPDATES = 1;
+SELECT COUNT(*) as complaints FROM complaints;
+SELECT COUNT(*) as notifications FROM notifications;
+DELETE FROM ratings;
+ALTER TABLE ratings AUTO_INCREMENT = 1;
+DESCRIBE complaints;
+SELECT * FROM grievance_types;
+SHOW TABLES LIKE 'grievance_type%';
+ALTER TABLE complaints MODIFY grievance_type_id INT NULL;
+
+DELETE FROM students
+WHERE username = 'your_username';
+DELETE FROM students
+WHERE username = 'nagarajvatagal2003@gmail.com';
+SELECT * FROM students;
