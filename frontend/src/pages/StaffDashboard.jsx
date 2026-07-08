@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import "./StaffDashboard.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Icons = {
   total:    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>,
   pending:  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
@@ -41,7 +43,7 @@ function SimpleQR({ value, size = 160 }) {
 function ComplaintModal({ complaint, onClose }) {
   const trackUrl = `${window.location.origin}/track/${complaint.id}`;
   const imageUrl = complaint.image
-    ? `http://localhost:5000/uploads/${complaint.image}`
+    ? `${API_URL}/uploads/${complaint.image}`
     : null;
 
   return (
@@ -156,7 +158,7 @@ export default function StaffDashboard() {
 
   const fetchComplaints = async () => {
     try {
-      const r = await fetch("http://localhost:5000/api/staff/assigned-complaints",
+      const r = await fetch(`${API_URL}/api/staff/assigned-complaints`,
         { headers: { Authorization: `Bearer ${token()}` } });
       const d = await r.json();
       if (d.success) {
@@ -176,7 +178,7 @@ export default function StaffDashboard() {
 
   const fetchNotifications = async () => {
     try {
-      const r = await fetch("http://localhost:5000/api/staff/notifications",
+      const r = await fetch(`${API_URL}/api/staff/notifications`,
         { headers: { Authorization: `Bearer ${token()}` } });
       const d = await r.json();
       if (d.success) setNotif(d.notifications);
@@ -187,7 +189,7 @@ export default function StaffDashboard() {
   const updateStatus = async (id, status) => {
     setSaving(p => ({ ...p, [id]: true }));
     try {
-      const r = await fetch(`http://localhost:5000/api/staff/complaints/${id}/status`, {
+      const r = await fetch(`${API_URL}/api/staff/complaints/${id}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token()}` },
         body: JSON.stringify({ status, staff_remark: remarks[id] || "" }),
