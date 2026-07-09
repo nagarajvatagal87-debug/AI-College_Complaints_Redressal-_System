@@ -8,6 +8,8 @@ import * as XLSX from "xlsx";
 import AdminSidebar from "../components/AdminSidebar";
 import "./AdminDashboard.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const PIE_COLORS = ["#3b82f6","#10b981","#f59e0b","#8b5cf6","#ef4444","#94a3b8"];
 
 export default function AdminDashboard() {
@@ -50,21 +52,21 @@ export default function AdminDashboard() {
     fetchCategoryData(); fetchStatusData(); fetchNotifications();
   };
 
-  const fetchDashboard    = async () => { try { const r=await fetch("http://localhost:5000/api/admin/dashboard"); const d=await r.json(); if(d.success) setStats(d.dashboard); } catch(e){} };
-  const fetchComplaints   = async () => { try { const r=await fetch("http://localhost:5000/api/admin/complaints"); const d=await r.json(); if(d.success) setComplaints(d.complaints); } catch(e){} };
-  const fetchCategoryData = async () => { try { const r=await fetch("http://localhost:5000/api/admin/complaints-by-category"); const d=await r.json(); if(d.success) setCategoryData(d.data); } catch(e){} };
-  const fetchStatusData   = async () => { try { const r=await fetch("http://localhost:5000/api/admin/complaints-by-status"); const d=await r.json(); if(d.success) setStatusData(d.data); } catch(e){} };
-  const fetchNotifications= async () => { try { const r=await fetch("http://localhost:5000/api/admin/notifications"); const d=await r.json(); if(d.success) setNotifications(d.notifications); } catch(e){} };
+  const fetchDashboard    = async () => { try { const r=await fetch(`${API_URL}/api/admin/dashboard`); const d=await r.json(); if(d.success) setStats(d.dashboard); } catch(e){} };
+  const fetchComplaints   = async () => { try { const r=await fetch(`${API_URL}/api/admin/complaints`); const d=await r.json(); if(d.success) setComplaints(d.complaints); } catch(e){} };
+  const fetchCategoryData = async () => { try { const r=await fetch(`${API_URL}/api/admin/complaints-by-category`); const d=await r.json(); if(d.success) setCategoryData(d.data); } catch(e){} };
+  const fetchStatusData   = async () => { try { const r=await fetch(`${API_URL}/api/admin/complaints-by-status`); const d=await r.json(); if(d.success) setStatusData(d.data); } catch(e){} };
+  const fetchNotifications= async () => { try { const r=await fetch(`${API_URL}/api/admin/notifications`); const d=await r.json(); if(d.success) setNotifications(d.notifications); } catch(e){} };
 
   const markAllRead = async () => {
-    await fetch("http://localhost:5000/api/admin/notifications/mark-read", { method:"PUT" });
+    await fetch(`${API_URL}/api/admin/notifications/mark-read`, { method:"PUT" });
     fetchNotifications();
   };
 
   const autoAssignStaff = async (complaintId) => {
     setAiAssigning(p => ({ ...p, [complaintId]: true }));
     try {
-      const r = await fetch(`http://localhost:5000/api/admin/complaints/${complaintId}/auto-assign`, { method:"POST" });
+      const r = await fetch(`${API_URL}/api/admin/complaints/${complaintId}/auto-assign`, { method:"POST" });
       const d = await r.json();
       if (d.success) {
         fetchComplaints(); fetchNotifications();
@@ -88,7 +90,7 @@ export default function AdminDashboard() {
     }
     setStaffSaving(true);
     try {
-      const r = await fetch("http://localhost:5000/api/admin/staff", {
+      const r = await fetch(`${API_URL}/api/admin/staff`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
