@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./stafflogin.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function StaffLogin() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
@@ -14,7 +16,7 @@ export default function StaffLogin() {
     e.preventDefault();
     setError(""); setLoading(true);
     try {
-      const r = await fetch("http://localhost:5000/api/staff/login", {
+      const r = await fetch(`${API_URL}/api/staff/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),

@@ -4,6 +4,8 @@ import AdminLayout from "../components/AdminLayout";
 import QRCode from "react-qr-code";
 import "./ComplaintDetails.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function ComplaintDetails() {
   const { id }     = useParams();
   const navigate   = useNavigate();
@@ -15,7 +17,7 @@ function ComplaintDetails() {
 
   const fetchComplaint = async () => {
     try {
-      const res  = await fetch(`http://localhost:5000/api/admin/complaints/${id}`);
+      const res  = await fetch(`${API_URL}/api/admin/complaints/${id}`);
       const data = await res.json();
       if (data.success) setComplaint(data.complaint);
     } catch (err) { console.error(err); }
@@ -46,10 +48,9 @@ function ComplaintDetails() {
     return `${hrs} Hours ${mins} Minutes`;
   };
 
-  // Use LAN IP so phone can scan QR
+  // Use the current frontend origin so the tracking link works whether on Vercel or localhost
   const getTrackingUrl = () => {
-    const host = window.location.hostname;
-    return `http://${host}:5173/track/${id}`;
+    return `${window.location.origin}/track/${id}`;
   };
 
   const handlePrintQR = () => {
@@ -216,7 +217,7 @@ function ComplaintDetails() {
               <div className="cd-card-body" style={{ padding:0 }}>
                 {complaint.image ? (
                   <img
-                    src={`http://localhost:5000/uploads/${complaint.image}`}
+                    src={`${API_URL}/uploads/${complaint.image}`}
                     alt="Complaint"
                     style={{
                       width:"100%",
@@ -229,7 +230,7 @@ function ComplaintDetails() {
                     onError={(e) => {
                       if (!e.target.dataset.tried) {
                         e.target.dataset.tried = "1";
-                        e.target.src = `http://localhost:5000/uploads/complaints/${complaint.image}`;
+                        e.target.src = `${API_URL}/uploads/complaints/${complaint.image}`;
                       } else {
                         e.target.style.display = "none";
                         document.getElementById(`no-img-${id}`).style.display = "flex";

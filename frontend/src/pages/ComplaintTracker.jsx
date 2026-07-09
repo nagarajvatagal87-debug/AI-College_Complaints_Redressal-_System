@@ -15,8 +15,8 @@ const PRIORITY_COLOR = {
   Low:    { bg:"#dcfce7", color:"#15803d" },
 };
 
-// ── Use same hostname as frontend so phone can reach backend ──
-const BACKEND = `http://${window.location.hostname}:5000`;
+// ── FIXED: use VITE_API_URL (works on Vercel), fall back to localhost for local dev ──
+const BACKEND = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export default function ComplaintTracker() {
   const { id }                    = useParams();
