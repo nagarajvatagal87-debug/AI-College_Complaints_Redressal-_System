@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config(); // ← FIXED: moved to top before all imports
+dotenv.config();
 
 import express from "express";
 import cors from "cors";
@@ -25,11 +25,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ── Serve uploaded images ──
 app.use("/uploads", express.static(path.join(__dirname, "uploads", "complaints")));
 app.use("/uploads/complaints", express.static(path.join(__dirname, "uploads", "complaints")));
 
-// ── Routes ──
 app.use("/api/students",        studentRoutes);
 app.use("/api/complaints",      complaintRoutes);
 app.use("/api/grievance-types", grievanceTypeRoutes);
@@ -38,7 +36,6 @@ app.use("/api/admin",           adminRoutes);
 app.use("/api/ai",              aiRoutes);
 app.use("/api/reports",         reportRoutes);
 
-// ── PUBLIC: Complaint QR Tracker ──
 app.get("/api/track/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -61,16 +58,14 @@ app.get("/api/track/:id", async (req, res) => {
   }
 });
 
-// ── Health check ──
 app.get("/", (req, res) => {
   res.send("✅ CampusVoice AI Backend Running");
 });
 
-// ── Email test ──
 app.get("/test-email", async (req, res) => {
   try {
     await sendEmail(
-      "nagarajvatagal2003@gmail.com",
+      "nagarajvatagal87@gmail.com",
       "CampusVoice AI — Test Email",
       "<h2>✅ Email service is working!</h2>"
     );
