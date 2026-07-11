@@ -1,6 +1,8 @@
+import dotenv from "dotenv";
+dotenv.config(); // ← FIXED: moved to top before all imports
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -15,8 +17,6 @@ import reportRoutes        from "./routes/reportRoutes.js";
 import { sendEmail } from "./services/emailService.js";
 import { db }        from "./config/db.js";
 
-dotenv.config();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 
@@ -26,8 +26,6 @@ app.use(cors());
 app.use(express.json());
 
 // ── Serve uploaded images ──
-// uploadMiddleware saves to "uploads/complaints/"
-// Frontend uses: http://localhost:5000/uploads/filename.jpg
 app.use("/uploads", express.static(path.join(__dirname, "uploads", "complaints")));
 app.use("/uploads/complaints", express.static(path.join(__dirname, "uploads", "complaints")));
 
@@ -54,12 +52,12 @@ app.get("/api/track/:id", async (req, res) => {
        JOIN students s ON c.student_id = s.id
        WHERE c.id = ?`, [id]
     );
-    if (rows.length===0)
-      return res.json({ success:false, message:"Complaint not found" });
-    res.json({ success:true, complaint:rows[0] });
+    if (rows.length === 0)
+      return res.json({ success: false, message: "Complaint not found" });
+    res.json({ success: true, complaint: rows[0] });
   } catch (err) {
     console.error("Track error:", err);
-    res.status(500).json({ success:false, message:err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
@@ -76,9 +74,9 @@ app.get("/test-email", async (req, res) => {
       "CampusVoice AI — Test Email",
       "<h2>✅ Email service is working!</h2>"
     );
-    res.json({ success:true, message:"Email sent!" });
+    res.json({ success: true, message: "Email sent!" });
   } catch (error) {
-    res.status(500).json({ success:false, message:error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
