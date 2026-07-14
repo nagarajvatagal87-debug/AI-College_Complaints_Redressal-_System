@@ -2,7 +2,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import { db } from "../config/db.js";
 import { sendEmail } from "../services/emailService.js";
-
+import { verifyToken } from "../middleware/authMiddleware.js";
 import {
   loginAdmin,
   getAdminDashboard,
@@ -240,6 +240,36 @@ router.post("/complaints/:id/auto-assign", async (req, res) => {
     });
   } catch (err) {
     console.error("Auto-assign error:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+// Get all staff
+router.get("/staff", verifyToken, async (req, res) => {
+  try {
+    const [staff] = await db.execute("SELECT id, name, username, email, role FROM staff ORDER BY id");
+    res.json({ success: true, staff });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Update staff
+router.put("/staff/:id", verifyToken, async (req, res) => {
+  try {
+    const { name, email, role } = req.body;
+    await db.execute("UPDATE staff SET name=?, email=?, role=? WHERE id=?", [name, email, role, req.params.id]);
+    res.json({ success: true, message: "Staff updated" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Delete staff
+router.delete("/staff/:id", verifyToken, async (req, res) => {
+  try {
+    await db.execute("DELETE FROM staff WHERE id=?", [req.params.id]);
+    res.json({ success: true, message: "Staff deleted" });
+  } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 });
