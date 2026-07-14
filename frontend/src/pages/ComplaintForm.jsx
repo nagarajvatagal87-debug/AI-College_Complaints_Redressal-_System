@@ -277,14 +277,18 @@ export default function ComplaintForm() {
               </button>
             </div>
             <textarea
-              name="description"
-              placeholder="Describe your complaint in detail... or click Speak to use voice input."
-              className="cf-textarea"
-              rows="4"
-              value={formData.description}
-              onChange={handleChange}
-              required
-            />
+  name="description"
+  placeholder="Describe your complaint in detail... or click Speak to use voice input."
+  className="cf-textarea"
+  rows="6"
+  value={formData.description}
+  onChange={handleChange}
+  required
+  maxLength={2000}
+/>
+<div style={{ textAlign:"right", fontSize:11, color: formData.description.length > 1800 ? "#ef4444" : "#9ca3af", marginTop:4 }}>
+  {formData.description.length}/2000 characters
+</div>
           </div>
 
           {/* AI Suggestions Row */}
