@@ -17,167 +17,210 @@ export const downloadReport = async (req, res) => {
       [student_id]
     );
 
-    const doc = new PDFDocument({ margin: 50, size: "A4" });
-    res.setHeader("Content-Disposition", "attachment; filename=My_Complaint_Report.pdf");
+    const doc = new PDFDocument({ margin: 0, size: "A4" });
+    res.setHeader("Content-Disposition", "attachment; filename=CampusVoice_Report.pdf");
     res.setHeader("Content-Type", "application/pdf");
     doc.pipe(res);
 
-    const pageW = doc.page.width;
-    const marginL = 50;
-    const contentW = pageW - 100;
+    const W = doc.page.width;   // 595
+    const H = doc.page.height;  // 842
+    const ML = 40;
+    const CW = W - ML * 2;
 
-    // ── Header ──
-    doc.rect(0, 0, pageW, 90).fill("#6366f1");
-    doc.fill("#fff")
-      .fontSize(24).font("Helvetica-Bold")
-      .text("CampusVoice AI", marginL, 20, { align: "center", width: contentW });
-    doc.fontSize(11).font("Helvetica")
-      .text("Smart Complaint Redressal System — My Report", marginL, 50, { align: "center", width: contentW });
-    doc.moveDown(4);
+    // ── HEADER ──
+    doc.rect(0, 0, W, 110).fill("#4f46e5");
+    doc.rect(0, 85, W, 25).fill("#6366f1");
 
-    // ── Student Info Box ──
+    // Logo circle
+    doc.circle(W / 2, 42, 22).fill("#fff");
+    doc.fill("#4f46e5").fontSize(18).font("Helvetica-Bold")
+      .text("CV", W / 2 - 11, 32);
+
+    doc.fill("#fff").fontSize(20).font("Helvetica-Bold")
+      .text("CampusVoice AI", ML, 68, { align: "center", width: CW });
+    doc.fill("rgba(255,255,255,0.8)").fontSize(9).font("Helvetica")
+      .text("Smart Complaint Redressal System  —  Student Report", ML, 89, { align: "center", width: CW });
+
+    let y = 120;
+
+    // ── STUDENT INFO CARD ──
     if (complaints.length > 0) {
-      const student = complaints[0];
-      doc.rect(marginL, doc.y, contentW, 80).fill("#f8faff").stroke("#e0e7ff");
-      const boxY = doc.y + 8;
-      doc.fill("#6366f1").fontSize(13).font("Helvetica-Bold")
-        .text("Student Information", marginL + 10, boxY);
-      doc.fill("#374151").fontSize(10).font("Helvetica")
-        .text(`Name: ${student.student_name}`, marginL + 10, boxY + 20)
-        .text(`Email: ${student.email}`, marginL + 10, boxY + 35)
-        .text(`Report Generated: ${new Date().toLocaleString()}`, marginL + 10, boxY + 50)
-        .text(`Total Complaints: ${complaints.length}`, marginL + 200, boxY + 20);
-      doc.moveDown(5);
+      const s = complaints[0];
+      doc.rect(ML, y, CW, 75).fill("#f8faff").stroke("#c7d2fe");
+      doc.rect(ML, y, 4, 75).fill("#4f46e5");
+
+      doc.fill("#4f46e5").fontSize(11).font("Helvetica-Bold")
+        .text("STUDENT INFORMATION", ML + 16, y + 10);
+
+      doc.fill("#374151").fontSize(9).font("Helvetica-Bold").text("Name:", ML + 16, y + 28);
+      doc.font("Helvetica").text(s.student_name, ML + 55, y + 28);
+
+      doc.font("Helvetica-Bold").text("Email:", ML + 16, y + 42);
+      doc.font("Helvetica").text(s.email, ML + 55, y + 42);
+
+      doc.font("Helvetica-Bold").text("Generated:", ML + 16, y + 56);
+      doc.font("Helvetica").text(new Date().toLocaleString(), ML + 70, y + 56);
+
+      doc.font("Helvetica-Bold").text("Total Complaints:", W / 2 + 20, y + 28);
+      doc.font("Helvetica").text(complaints.length.toString(), W / 2 + 115, y + 28);
+
+      y += 90;
     }
 
-    // ── Summary Box ──
+    // ── SUMMARY CARDS ──
     const total    = complaints.length;
     const pending  = complaints.filter(c => c.status === "Pending").length;
     const inProg   = complaints.filter(c => c.status === "In Progress").length;
     const resolved = complaints.filter(c => c.status === "Resolved").length;
 
-    doc.moveDown(0.5);
-    const sumY = doc.y;
-    const boxW = (contentW - 30) / 4;
-
-    const summaryItems = [
-      { label: "Total", value: total, color: "#6366f1", bg: "#ede9fe" },
-      { label: "Pending", value: pending, color: "#a16207", bg: "#fef9c3" },
-      { label: "In Progress", value: inProg, color: "#1d4ed8", bg: "#dbeafe" },
-      { label: "Resolved", value: resolved, color: "#15803d", bg: "#dcfce7" },
+    const cards = [
+      { label: "TOTAL",       value: total,    bg: "#ede9fe", border: "#4f46e5", text: "#4f46e5" },
+      { label: "PENDING",     value: pending,  bg: "#fef9c3", border: "#ca8a04", text: "#92400e" },
+      { label: "IN PROGRESS", value: inProg,   bg: "#dbeafe", border: "#2563eb", text: "#1e40af" },
+      { label: "RESOLVED",    value: resolved, bg: "#dcfce7", border: "#16a34a", text: "#14532d" },
     ];
 
-    summaryItems.forEach((item, i) => {
-      const x = marginL + i * (boxW + 10);
-      doc.rect(x, sumY, boxW, 50).fill(item.bg).stroke(item.color);
-      doc.fill(item.color).fontSize(20).font("Helvetica-Bold")
-        .text(item.value.toString(), x, sumY + 6, { width: boxW, align: "center" });
-      doc.fill(item.color).fontSize(9).font("Helvetica")
-        .text(item.label, x, sumY + 32, { width: boxW, align: "center" });
+    const cardW = (CW - 15) / 4;
+    cards.forEach((card, i) => {
+      const cx = ML + i * (cardW + 5);
+      doc.rect(cx, y, cardW, 55).fill(card.bg).stroke(card.border);
+      doc.rect(cx, y, cardW, 3).fill(card.border);
+      doc.fill(card.text).fontSize(24).font("Helvetica-Bold")
+        .text(card.value.toString(), cx, y + 10, { width: cardW, align: "center" });
+      doc.fill(card.text).fontSize(7).font("Helvetica-Bold")
+        .text(card.label, cx, y + 40, { width: cardW, align: "center" });
     });
 
-    doc.moveDown(4.5);
+    y += 68;
 
-    // ── Divider ──
-    doc.moveTo(marginL, doc.y).lineTo(pageW - marginL, doc.y)
-      .strokeColor("#6366f1").lineWidth(2).stroke();
-    doc.moveDown(0.5);
+    // ── SECTION TITLE ──
+    doc.rect(ML, y, CW, 24).fill("#4f46e5");
+    doc.fill("#fff").fontSize(10).font("Helvetica-Bold")
+      .text("COMPLAINT DETAILS", ML + 10, y + 7);
+    y += 28;
 
-    // ── Table Header ──
-    const cols = {
-      id:       { x: marginL,       w: 30  },
-      title:    { x: marginL + 30,  w: 100 },
-      category: { x: marginL + 130, w: 70  },
-      priority: { x: marginL + 200, w: 55  },
-      staff:    { x: marginL + 255, w: 80  },
-      status:   { x: marginL + 335, w: 65  },
-      date:     { x: marginL + 400, w: 95  },
-    };
+    // ── TABLE HEADER ──
+    const cols = [
+      { label: "#",           w: 28  },
+      { label: "Title",       w: 110 },
+      { label: "Category",    w: 70  },
+      { label: "Priority",    w: 52  },
+      { label: "Assigned To", w: 85  },
+      { label: "Status",      w: 62  },
+      { label: "Date",        w: 58  },
+      { label: "Rating",      w: 50  },
+    ];
 
-    const drawTableHeader = () => {
-      const hY = doc.y;
-      doc.rect(marginL, hY, contentW, 20).fill("#6366f1");
-      doc.fill("#fff").fontSize(8).font("Helvetica-Bold");
-      Object.entries(cols).forEach(([key, col]) => {
-        const labels = { id: "#", title: "Title", category: "Category", priority: "Priority", staff: "Assigned To", status: "Status", date: "Submitted" };
-        doc.text(labels[key], col.x + 3, hY + 6, { width: col.w - 6 });
+    const drawHeader = (startY) => {
+      doc.rect(ML, startY, CW, 20).fill("#e0e7ff");
+      let cx = ML;
+      cols.forEach(col => {
+        doc.fill("#312e81").fontSize(8).font("Helvetica-Bold")
+          .text(col.label, cx + 4, startY + 6, { width: col.w - 6 });
+        cx += col.w;
       });
-      doc.moveDown(1.5);
+      return startY + 20;
     };
 
-    drawTableHeader();
+    y = drawHeader(y);
 
-    // ── Table Rows ──
+    // ── TABLE ROWS ──
     complaints.forEach((c, i) => {
-      const rowH = 45;
+      const descLines = c.staff_remark ? 2 : 1;
+      const rowH = descLines === 2 ? 40 : 28;
 
-      if (doc.y + rowH > doc.page.height - 80) {
-        doc.addPage();
-        drawTableHeader();
+      if (y + rowH > H - 60) {
+        doc.addPage({ margin: 0 });
+
+        // Mini header on new page
+        doc.rect(0, 0, W, 30).fill("#4f46e5");
+        doc.fill("#fff").fontSize(10).font("Helvetica-Bold")
+          .text("CampusVoice AI — Complaint Report (continued)", ML, 10);
+        y = 40;
+        y = drawHeader(y);
       }
 
-      const rowY = doc.y;
-      const bgColor = i % 2 === 0 ? "#ffffff" : "#f8faff";
-      doc.rect(marginL, rowY, contentW, rowH).fill(bgColor).stroke("#e2e8f0");
+      // Row background
+      const rowBg = i % 2 === 0 ? "#ffffff" : "#f5f3ff";
+      doc.rect(ML, y, CW, rowH).fill(rowBg);
 
-      // Status color
-      const statusColor = c.status === "Resolved" ? "#15803d" : c.status === "In Progress" ? "#1d4ed8" : "#a16207";
-      const statusBg = c.status === "Resolved" ? "#dcfce7" : c.status === "In Progress" ? "#dbeafe" : "#fef9c3";
+      // Left accent line for status
+      const accentColor = c.status === "Resolved" ? "#16a34a" : c.status === "In Progress" ? "#2563eb" : "#ca8a04";
+      doc.rect(ML, y, 3, rowH).fill(accentColor);
 
-      doc.fill("#111827").fontSize(8).font("Helvetica");
+      // Row border
+      doc.rect(ML, y, CW, rowH).stroke("#e2e8f0");
 
-      // ID
-      doc.text(`#${c.id}`, cols.id.x + 3, rowY + 5, { width: cols.id.w - 6 });
+      let cx = ML;
+      const textY = y + (rowH === 28 ? 10 : 8);
+
+      // #
+      doc.fill("#6b7280").fontSize(8).font("Helvetica")
+        .text(`#${c.id}`, cx + 4, textY, { width: cols[0].w - 6 });
+      cx += cols[0].w;
 
       // Title
-      doc.font("Helvetica-Bold")
-        .text(c.title || "—", cols.title.x + 3, rowY + 5, { width: cols.title.w - 6 });
+      doc.fill("#111827").fontSize(8).font("Helvetica-Bold")
+        .text(c.title || "—", cx + 4, textY, { width: cols[1].w - 6, ellipsis: true });
+      if (c.staff_remark) {
+        doc.fill("#6b7280").fontSize(7).font("Helvetica")
+          .text(`↳ ${c.staff_remark}`, cx + 4, textY + 16, { width: cols[1].w + cols[2].w + cols[3].w - 6, ellipsis: true });
+      }
+      cx += cols[1].w;
 
       // Category
-      doc.font("Helvetica")
-        .text(c.category || "—", cols.category.x + 3, rowY + 5, { width: cols.category.w - 6 });
+      doc.fill("#374151").fontSize(8).font("Helvetica")
+        .text(c.category || "—", cx + 4, textY, { width: cols[2].w - 6 });
+      cx += cols[2].w;
 
       // Priority
-      const priColor = c.priority === "High" ? "#dc2626" : c.priority === "Medium" ? "#f59e0b" : "#16a34a";
-      doc.fill(priColor).font("Helvetica-Bold")
-        .text(c.priority || "—", cols.priority.x + 3, rowY + 5, { width: cols.priority.w - 6 });
+      const priColor = c.priority === "High" ? "#dc2626" : c.priority === "Medium" ? "#d97706" : "#16a34a";
+      const priBg    = c.priority === "High" ? "#fee2e2" : c.priority === "Medium" ? "#fef3c7" : "#dcfce7";
+      doc.rect(cx + 3, textY - 2, cols[3].w - 8, 14).fill(priBg);
+      doc.fill(priColor).fontSize(7).font("Helvetica-Bold")
+        .text(c.priority || "—", cx + 3, textY + 1, { width: cols[3].w - 8, align: "center" });
+      cx += cols[3].w;
 
-      // Staff
-      doc.fill("#111827").font("Helvetica")
-        .text(c.assigned_to || "Not Assigned", cols.staff.x + 3, rowY + 5, { width: cols.staff.w - 6 });
+      // Assigned To
+      doc.fill("#374151").fontSize(7.5).font("Helvetica")
+        .text(c.assigned_to || "Not Assigned", cx + 4, textY, { width: cols[4].w - 6 });
+      cx += cols[4].w;
 
       // Status badge
-      doc.rect(cols.status.x + 3, rowY + 4, cols.status.w - 8, 14).fill(statusBg);
-      doc.fill(statusColor).font("Helvetica-Bold").fontSize(7)
-        .text(c.status, cols.status.x + 3, rowY + 7, { width: cols.status.w - 8, align: "center" });
+      const stColor = c.status === "Resolved" ? "#15803d" : c.status === "In Progress" ? "#1d4ed8" : "#92400e";
+      const stBg    = c.status === "Resolved" ? "#dcfce7" : c.status === "In Progress" ? "#dbeafe" : "#fef9c3";
+      doc.rect(cx + 2, textY - 2, cols[5].w - 6, 14).fill(stBg).stroke(stColor);
+      doc.fill(stColor).fontSize(6.5).font("Helvetica-Bold")
+        .text(c.status, cx + 2, textY + 1, { width: cols[5].w - 6, align: "center" });
+      cx += cols[5].w;
 
       // Date
-      doc.fill("#374151").font("Helvetica").fontSize(7)
-        .text(new Date(c.created_at).toLocaleDateString(), cols.date.x + 3, rowY + 5, { width: cols.date.w - 6 });
-
-      // Staff remark on second line
-      if (c.staff_remark) {
-        doc.fill("#6b7280").font("Helvetica").fontSize(7)
-          .text(`Remark: ${c.staff_remark}`, cols.title.x + 3, rowY + 20, { width: contentW - 40 });
-      }
+      doc.fill("#6b7280").fontSize(7).font("Helvetica")
+        .text(new Date(c.created_at).toLocaleDateString("en-IN"), cx + 4, textY, { width: cols[6].w - 6 });
+      cx += cols[6].w;
 
       // Rating
-      if (c.rating) {
-        doc.fill("#f59e0b").fontSize(7)
-          .text(`${"★".repeat(c.rating)}${"☆".repeat(5 - c.rating)}`, cols.title.x + 3, rowY + 32, { width: 60 });
-      }
+      const stars = c.rating ? `${c.rating}/5` : "N/A";
+      doc.fill(c.rating >= 4 ? "#16a34a" : c.rating >= 2 ? "#d97706" : "#6b7280")
+        .fontSize(8).font("Helvetica-Bold")
+        .text(stars, cx + 4, textY, { width: cols[7].w - 6, align: "center" });
 
-      doc.moveDown(3);
+      y += rowH;
     });
 
     if (complaints.length === 0) {
-      doc.moveDown(2);
-      doc.fontSize(14).fill("#6b7280").text("No complaints found.", { align: "center" });
+      doc.rect(ML, y, CW, 60).fill("#f8faff").stroke("#e0e7ff");
+      doc.fill("#9ca3af").fontSize(12).font("Helvetica")
+        .text("No complaints found.", ML, y + 22, { width: CW, align: "center" });
+      y += 70;
     }
 
-    // ── Footer ──
-    doc.fontSize(8).fill("#94a3b8")
-      .text("© 2026 CampusVoice AI — Confidential Student Report", marginL, doc.page.height - 40, { align: "center", width: contentW });
+    // ── FOOTER ──
+    const footerY = H - 35;
+    doc.rect(0, footerY, W, 35).fill("#4f46e5");
+    doc.fill("#fff").fontSize(8).font("Helvetica")
+      .text("© 2026 CampusVoice AI  |  Confidential Student Report  |  Generated on " + new Date().toLocaleDateString(),
+        ML, footerY + 13, { align: "center", width: CW });
 
     doc.end();
   } catch (error) {
