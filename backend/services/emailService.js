@@ -1,10 +1,19 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+  family: 4,
+});
 
 export const sendEmail = async (to, subject, html) => {
-  await resend.emails.send({
-    from: "CampusVoice AI <onboarding@resend.dev>",
+  await transporter.sendMail({
+    from: `"CampusVoice AI" <${process.env.EMAIL_USER}>`,
     to,
     subject,
     html,
