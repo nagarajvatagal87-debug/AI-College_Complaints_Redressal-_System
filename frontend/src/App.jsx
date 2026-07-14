@@ -27,6 +27,7 @@ import ComplaintTracker from "./pages/ComplaintTracker";
 // Components
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import AdminLayout         from "./components/AdminLayout";
+import ManageStaff from "./pages/ManageStaff";
 
 // ── Protected Staff Route ──
 function ProtectedStaffRoute({ children }) {
@@ -190,6 +191,8 @@ function App() {
             }}>← Go Home</a>
           </div>
         }/>
+        <Route path="/admin/staff" element={<ManageStaff />} />
+
 
       </Routes>
     </BrowserRouter>
