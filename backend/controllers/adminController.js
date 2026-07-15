@@ -50,17 +50,23 @@ export const getAllComplaints = async (req, res) => {
   try {
     const [complaints] = await db.execute(`
       SELECT
-    c.id,
-    s.name AS student_name,
-    c.title,
-    c.category,
-    c.priority,
-    c.status,
-    c.assigned_to,
-    c.created_at
+        c.id,
+        s.name AS student_name,
+        c.title,
+        c.description,
+        c.category,
+        c.priority,
+        c.status,
+        c.assigned_to,
+        c.assigned_at,
+        c.staff_remark,
+        c.rating,
+        c.feedback,
+        c.sentiment,
+        c.created_at,
+        c.resolved_at
       FROM complaints c
-      JOIN students s
-      ON c.student_id = s.id
+      JOIN students s ON c.student_id = s.id
       ORDER BY c.created_at DESC
     `);
 

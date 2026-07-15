@@ -273,5 +273,41 @@ router.delete("/staff/:id", verifyToken, async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 });
+// Get all students
+router.get("/students", verifyToken, async (req, res) => {
+  try {
+    const [students] = await db.execute("SELECT id, name, username, email, mobile FROM students ORDER BY id DESC");
+    res.json({ success: true, students });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Delete student
+router.delete("/students/:id", verifyToken, async (req, res) => {
+  try {
+    await db.execute("DELETE FROM students WHERE id=?", [req.params.id]);
+    res.json({ success: true, message: "Student deleted" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Admin report download
+router.get("/report/download", verifyToken, async (req, res) => {
+  try {
+    const [complaints] = await db.execute(
+      `SELECT c.*, s.name AS student_name, s.email
+       FROM complaints c
+       JOIN students s ON c.student_id = s.id
+       ORDER BY c.created_at DESC`
+    );
+    req.user = { ...req.user, complaints };
+    const { downloadAdminReport } = await import("../controllers/reportController.js");
+    downloadAdminReport(req, res);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
 export default router;
