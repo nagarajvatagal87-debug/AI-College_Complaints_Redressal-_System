@@ -28,6 +28,14 @@ import ComplaintTracker from "./pages/ComplaintTracker";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import AdminLayout         from "./components/AdminLayout";
 import ManageStaff from "./pages/ManageStaff";
+// Add these imports at top
+import AllComplaints  from "./pages/AllComplaints";
+import ManageStudents from "./pages/ManageStudents";
+import AssignedStaff  from "./pages/AssignedStaff";
+import AdminReports   from "./pages/AdminReports";
+import AISentiment    from "./pages/AISentiment";
+import AdminProfile   from "./pages/AdminProfile";
+import AdminSettings  from "./pages/AdminSettings";
 
 // ── Protected Staff Route ──
 function ProtectedStaffRoute({ children }) {
@@ -123,54 +131,18 @@ function App() {
         }/>
 
         {/* ── SIDEBAR PLACEHOLDER PAGES ── */}
-        <Route path="/admin/complaints" element={
-          <ProtectedAdminRoute>
-            <PlaceholderPage title="All Complaints" emoji="📋"
-              description="View and manage all complaints from the main dashboard." />
-          </ProtectedAdminRoute>
-        }/>
-        <Route path="/admin/students" element={
-          <ProtectedAdminRoute>
-            <PlaceholderPage title="Manage Students" emoji="👨‍🎓"
-              description="View and manage all registered students." />
-          </ProtectedAdminRoute>
-        }/>
+        <Route path="/admin/complaints" element={<ProtectedAdminRoute><AllComplaints /></ProtectedAdminRoute>}/>
+        <Route path="/admin/students"   element={<ProtectedAdminRoute><ManageStudents /></ProtectedAdminRoute>}/>
+
         <Route path="/admin/staff" element={
-          <ProtectedAdminRoute>
-            <PlaceholderPage title="Manage Staff" emoji="👨‍🏫"
-              description="View and manage all staff members." />
-          </ProtectedAdminRoute>
-        }/>
-        <Route path="/admin/assigned" element={
-          <ProtectedAdminRoute>
-            <PlaceholderPage title="Assigned Staff" emoji="✅"
-              description="View all staff assignment history." />
-          </ProtectedAdminRoute>
-        }/>
-        <Route path="/admin/reports" element={
-          <ProtectedAdminRoute>
-            <PlaceholderPage title="Reports" emoji="📈"
-              description="Download and view detailed complaint reports." />
-          </ProtectedAdminRoute>
-        }/>
-        <Route path="/admin/sentiment" element={
-          <ProtectedAdminRoute>
-            <PlaceholderPage title="AI Sentiment Analysis" emoji="🤖"
-              description="View AI-powered sentiment analysis across all complaints." />
-          </ProtectedAdminRoute>
-        }/>
-        <Route path="/admin/profile" element={
-          <ProtectedAdminRoute>
-            <PlaceholderPage title="Profile" emoji="👤"
-              description="Manage your admin profile and settings." />
-          </ProtectedAdminRoute>
-        }/>
-        <Route path="/admin/settings" element={
-          <ProtectedAdminRoute>
-            <PlaceholderPage title="Settings" emoji="⚙️"
-              description="Configure system settings and preferences." />
-          </ProtectedAdminRoute>
-        }/>
+  <ProtectedAdminRoute><ManageStaff /></ProtectedAdminRoute>
+}/>
+        <Route path="/admin/assigned"   element={<ProtectedAdminRoute><AssignedStaff /></ProtectedAdminRoute>}/>
+        <Route path="/admin/reports"    element={<ProtectedAdminRoute><AdminReports /></ProtectedAdminRoute>}/>
+        <Route path="/admin/sentiment"  element={<ProtectedAdminRoute><AISentiment /></ProtectedAdminRoute>}/>
+        <Route path="/admin/profile"    element={<ProtectedAdminRoute><AdminProfile /></ProtectedAdminRoute>}/>
+        <Route path="/admin/settings"   element={<ProtectedAdminRoute><AdminSettings /></ProtectedAdminRoute>}/>
+
 
         {/* ── 404 FALLBACK ── */}
         <Route path="*" element={
@@ -191,7 +163,7 @@ function App() {
             }}>← Go Home</a>
           </div>
         }/>
-        <Route path="/admin/staff" element={<ManageStaff />} />
+      
 
 
       </Routes>

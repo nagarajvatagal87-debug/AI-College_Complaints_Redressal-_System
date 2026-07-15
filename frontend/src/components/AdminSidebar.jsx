@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import adminPhoto from "../assets/admin-photo.jpg.jpeg";
 
 const NAV = [
   { to:"/admin-dashboard",     icon:"📊", label:"Dashboard"       },
@@ -72,7 +73,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }) {
         borderBottom:"1px solid rgba(255,255,255,0.08)",
         background:"rgba(255,255,255,0.03)", flexShrink:0,
       }}>
-        <img src="/images/nagaraj.png" width="46" height="46" alt="Admin"
+        <img src={adminPhoto} width="46" height="46" alt="Admin"
           style={{ borderRadius:"50%", objectFit:"cover", border:"2.5px solid #6366f1", flexShrink:0 }}
           onError={e => {
             e.target.style.display = "none";

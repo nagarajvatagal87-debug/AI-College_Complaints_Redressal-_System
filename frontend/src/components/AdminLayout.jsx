@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import adminPhoto from "../assets/admin-photo.jpg.jpeg";
 
 const NAV = [
   { to: "/admin-dashboard",         icon: "📊", label: "Dashboard" },
@@ -60,7 +61,7 @@ function AdminLayout({ children }) {
           background: "rgba(255,255,255,0.03)",
         }}>
           <img
-            src="/images/nagaraj.png"
+            src={adminPhoto}
             width="60" height="60"
             alt="Admin"
             style={{ borderRadius: "50%", objectFit: "cover", border: "2.5px solid #6366f1" }}

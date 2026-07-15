@@ -22,7 +22,7 @@ export default function ManageStaff() {
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState({ text: "", type: "" });
 
-const token = localStorage.getItem("adminToken");
+  const token = localStorage.getItem("token");
 
   useEffect(() => { fetchStaff(); }, []);
 
