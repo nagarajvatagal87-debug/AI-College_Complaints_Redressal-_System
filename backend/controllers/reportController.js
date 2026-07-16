@@ -1,5 +1,12 @@
 import PDFDocument from "pdfkit";
 import { db } from "../config/db.js";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const LOGO_PATH = path.join(__dirname, "../assets/logo.png");
+const LOGO_EXISTS = fs.existsSync(LOGO_PATH);
 
 export const downloadReport = async (req, res) => {
   try {
@@ -18,9 +25,12 @@ export const downloadReport = async (req, res) => {
     );
 
     const doc = new PDFDocument({ margin: 0, size: "A4", bufferPages: true });
-    res.setHeader("Content-Disposition", "attachment; filename=CampusVoice_Report.pdf");
-    res.setHeader("Content-Type", "application/pdf");
-    doc.pipe(res);
+    const chunks = [];
+    doc.on("data", (chunk) => chunks.push(chunk));
+    const pdfReady = new Promise((resolve, reject) => {
+      doc.on("end", () => resolve(Buffer.concat(chunks)));
+      doc.on("error", reject);
+    });
 
     const W = doc.page.width;   // 595
     const H = doc.page.height;  // 842
@@ -71,14 +81,26 @@ export const downloadReport = async (req, res) => {
     doc.rect(0, headerH - 4, W, 4).fill(C.primaryLt);
 
     // Logo badge — left aligned, letterhead style
-    const logoCx = ML + 26, logoCy = 46;
-    doc.circle(logoCx, logoCy, 26).fill("#ffffff");
-    doc.circle(logoCx, logoCy, 26).lineWidth(1.5).stroke("#c7d2fe");
-    doc.fill(C.primary).fontSize(20).font("Helvetica-Bold")
-      .text("CV", logoCx - 16, logoCy - 11, { width: 32, align: "center" });
+    const logoSize = 62;
+    const logoX = ML, logoY = 20;
+    doc.roundedRect(logoX - 5, logoY - 5, logoSize + 10, logoSize + 10, 14).fill("#ffffff");
+    if (LOGO_EXISTS) {
+      try {
+        doc.image(LOGO_PATH, logoX, logoY, { width: logoSize, height: logoSize });
+      } catch (imgErr) {
+        console.error("Logo image failed to render in PDF:", imgErr.message);
+        doc.fill(C.primary).fontSize(20).font("Helvetica-Bold")
+          .text("CV", logoX, logoY + 20, { width: logoSize, align: "center" });
+      }
+    } else {
+      console.error("Logo file not found at:", LOGO_PATH, "— using fallback text.");
+      doc.fill(C.primary).fontSize(20).font("Helvetica-Bold")
+        .text("CV", logoX, logoY + 20, { width: logoSize, align: "center" });
+    }
 
     // Title block, next to logo
-    const titleX = logoCx + 42;
+    const titleX = logoX + logoSize + 20;
+    const logoCy = logoY + logoSize / 2;
     doc.fill("#ffffff").fontSize(19).font("Helvetica-Bold")
       .text("CampusVoice AI", titleX, logoCy - 20);
     doc.fill("#c7d2fe").fontSize(9).font("Helvetica")
@@ -470,6 +492,11 @@ export const downloadReport = async (req, res) => {
     }
 
     doc.end();
+    const pdfBuffer = await pdfReady;
+    res.setHeader("Content-Disposition", "attachment; filename=CampusVoice_Report.pdf");
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Length", pdfBuffer.length);
+    res.end(pdfBuffer);
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: error.message });

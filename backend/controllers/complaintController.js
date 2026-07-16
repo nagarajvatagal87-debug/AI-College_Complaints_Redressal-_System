@@ -51,6 +51,12 @@ const aiPickStaff = (title, description, category) => {
   return "Infrastructure Staff";
 };
 
+// Shared logo header used at the top of every email template
+const logoHeader = () => `
+  <img src="cid:campusvoice-logo" alt="CampusVoice AI" width="56" height="56"
+    style="border-radius:14px;display:block;margin:0 auto 10px;" />
+`;
+
 const buildStudentEmail = ({ name, complaintId, title, category, priority, assignedTo }) => `
 <!DOCTYPE html>
 <html>
@@ -62,7 +68,7 @@ const buildStudentEmail = ({ name, complaintId, title, category, priority, assig
         style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.1);">
         <tr>
           <td style="background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:32px 36px;text-align:center;">
-            <div style="font-size:36px;margin-bottom:8px;">🎓</div>
+            ${logoHeader()}
             <h1 style="margin:0;font-size:22px;font-weight:800;color:#fff;">CampusVoice AI</h1>
             <p style="margin:6px 0 0;font-size:13px;color:rgba(255,255,255,0.8);">Smart Complaint Redressal System</p>
           </td>
@@ -131,7 +137,7 @@ const buildStaffEmail = ({ staffName, complaintId, title, description, category,
         style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.1);">
         <tr>
           <td style="background:linear-gradient(135deg,#f59e0b,#ef4444);padding:32px 36px;text-align:center;">
-            <div style="font-size:36px;margin-bottom:8px;">🔔</div>
+            ${logoHeader()}
             <h1 style="margin:0;font-size:22px;font-weight:800;color:#fff;">New Complaint Assigned</h1>
             <p style="margin:6px 0 0;font-size:13px;color:rgba(255,255,255,0.85);">CampusVoice AI — Staff Notification</p>
           </td>
@@ -169,7 +175,7 @@ const buildStaffEmail = ({ staffName, complaintId, title, description, category,
             </table>
             <table width="100%" cellpadding="0" cellspacing="0">
               <tr><td align="center">
-                href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/staff-dashboard"
+                <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/staff-dashboard"
                   style="display:inline-block;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;text-decoration:none;padding:13px 32px;border-radius:10px;font-size:14px;font-weight:700;">
                   🔧 Open Staff Dashboard
                 </a>
@@ -201,7 +207,7 @@ const buildResolutionEmail = ({ name, complaintId, title, category, priority, as
         style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.1);">
         <tr>
           <td style="background:linear-gradient(135deg,#059669,#047857);padding:32px 36px;text-align:center;">
-            <div style="font-size:36px;margin-bottom:8px;">✅</div>
+            ${logoHeader()}
             <h1 style="margin:0;font-size:22px;font-weight:800;color:#fff;">Complaint Resolved!</h1>
             <p style="margin:6px 0 0;font-size:13px;color:rgba(255,255,255,0.8);">CampusVoice AI</p>
           </td>
