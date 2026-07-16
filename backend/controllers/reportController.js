@@ -4,8 +4,9 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const LOGO_PATH = path.join(__dirname, "../assets/logo.png");
+const LOGO_PATH = path.join(__dirname, "../../frontend/public/logo.png");
 const LOGO_EXISTS = fs.existsSync(LOGO_PATH);
 
 export const downloadReport = async (req, res) => {
@@ -497,6 +498,187 @@ export const downloadReport = async (req, res) => {
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Length", pdfBuffer.length);
     res.end(pdfBuffer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+export const downloadAdminReport = async (req, res) => {
+  try {
+    const [complaints] = await db.execute(
+      `SELECT c.*, s.name AS student_name, s.email
+       FROM complaints c
+       JOIN students s ON c.student_id = s.id
+       ORDER BY c.created_at DESC`
+    );
+
+    const doc = new PDFDocument({ margin: 0, size: "A4" });
+    res.setHeader("Content-Disposition", "attachment; filename=Admin_Report.pdf");
+    res.setHeader("Content-Type", "application/pdf");
+    doc.pipe(res);
+
+    const W = doc.page.width;
+    const H = doc.page.height;
+    const ML = 40;
+    const CW = W - ML * 2;
+
+    // ── HEADER ──
+    // ── HEADER ──
+doc.rect(0, 0, W, 100).fill("#4f46e5");
+doc.rect(0, 85, W, 15).fill("#6366f1");
+
+// Logo
+const logoSize = 70;
+const logoX = ML;
+const logoY = 15;
+doc.roundedRect(logoX - 4, logoY - 4, logoSize + 8, logoSize + 8, 12).fill("#ffffff");
+if (LOGO_EXISTS) {
+  try {
+    doc.image(LOGO_PATH, logoX, logoY, { width: logoSize, height: logoSize });
+  } catch (e) {
+    doc.fill("#4f46e5").fontSize(18).font("Helvetica-Bold")
+      .text("CV", logoX, logoY + 22, { width: logoSize, align: "center" });
+  }
+} else {
+  doc.fill("#4f46e5").fontSize(18).font("Helvetica-Bold")
+    .text("CV", logoX, logoY + 22, { width: logoSize, align: "center" });
+}
+
+// Title next to logo
+const titleX = ML + logoSize + 20;
+doc.fill("#fff").fontSize(18).font("Helvetica-Bold")
+  .text("College Complaints Redressal System", titleX, 20, { width: CW - logoSize - 20 });
+doc.fill("rgba(255,255,255,0.8)").fontSize(10).font("Helvetica")
+  .text("Admin Report  —  All Complaints", titleX, 46, { width: CW - logoSize - 20 });
+doc.fill("rgba(255,255,255,0.6)").fontSize(8)
+  .text(`Generated: ${new Date().toLocaleString()}`, titleX, 62, { width: CW - logoSize - 20 });
+    let y = 110;
+
+    // ── SUMMARY CARDS ──
+    const total    = complaints.length;
+    const pending  = complaints.filter(c => c.status === "Pending").length;
+    const inProg   = complaints.filter(c => c.status === "In Progress").length;
+    const resolved = complaints.filter(c => c.status === "Resolved").length;
+
+    const cards = [
+      { label: "TOTAL",       value: total,    bg: "#ede9fe", border: "#4f46e5", text: "#4f46e5" },
+      { label: "PENDING",     value: pending,  bg: "#fef9c3", border: "#ca8a04", text: "#92400e" },
+      { label: "IN PROGRESS", value: inProg,   bg: "#dbeafe", border: "#2563eb", text: "#1e40af" },
+      { label: "RESOLVED",    value: resolved, bg: "#dcfce7", border: "#16a34a", text: "#14532d" },
+    ];
+
+    const cardW = (CW - 15) / 4;
+    cards.forEach((card, i) => {
+      const cx = ML + i * (cardW + 5);
+      doc.rect(cx, y, cardW, 55).fill(card.bg).stroke(card.border);
+      doc.rect(cx, y, cardW, 3).fill(card.border);
+      doc.fill(card.text).fontSize(24).font("Helvetica-Bold")
+        .text(card.value.toString(), cx, y + 10, { width: cardW, align: "center" });
+      doc.fill(card.text).fontSize(7).font("Helvetica-Bold")
+        .text(card.label, cx, y + 40, { width: cardW, align: "center" });
+    });
+
+    y += 68;
+
+    // ── TABLE HEADER ──
+    const cols = [
+      { label: "#",           w: 28  },
+      { label: "Title",       w: 100 },
+      { label: "Student",     w: 80  },
+      { label: "Category",    w: 65  },
+      { label: "Priority",    w: 50  },
+      { label: "Assigned To", w: 80  },
+      { label: "Status",      w: 60  },
+      { label: "Date",        w: 52  },
+    ];
+
+    const drawHeader = (startY) => {
+      doc.rect(ML, startY, CW, 20).fill("#4f46e5");
+      let cx = ML;
+      cols.forEach(col => {
+        doc.fill("#fff").fontSize(8).font("Helvetica-Bold")
+          .text(col.label, cx + 3, startY + 6, { width: col.w - 4 });
+        cx += col.w;
+      });
+      return startY + 20;
+    };
+
+    y = drawHeader(y);
+
+    // ── TABLE ROWS ──
+    complaints.forEach((c, i) => {
+      const rowH = 28;
+      if (y + rowH > H - 60) {
+        doc.addPage({ margin: 0 });
+        doc.rect(0, 0, W, 30).fill("#4f46e5");
+        doc.fill("#fff").fontSize(10).font("Helvetica-Bold")
+          .text("College Complaints Redressal System — Admin Report (continued)", ML, 10);
+        y = 40;
+        y = drawHeader(y);
+      }
+
+      const rowBg = i % 2 === 0 ? "#ffffff" : "#f5f3ff";
+      doc.rect(ML, y, CW, rowH).fill(rowBg).stroke("#e2e8f0");
+
+      const accentColor = c.status === "Resolved" ? "#16a34a" : c.status === "In Progress" ? "#2563eb" : "#ca8a04";
+      doc.rect(ML, y, 3, rowH).fill(accentColor);
+
+      let cx = ML;
+      const textY = y + 10;
+
+      doc.fill("#6b7280").fontSize(8).font("Helvetica")
+        .text(`#${c.id}`, cx + 4, textY, { width: cols[0].w - 6 });
+      cx += cols[0].w;
+
+      doc.fill("#111827").fontSize(8).font("Helvetica-Bold")
+        .text(c.title || "—", cx + 4, textY, { width: cols[1].w - 6, ellipsis: true });
+      cx += cols[1].w;
+
+      doc.fill("#374151").fontSize(7.5).font("Helvetica")
+        .text(c.student_name || "—", cx + 4, textY, { width: cols[2].w - 6, ellipsis: true });
+      cx += cols[2].w;
+
+      doc.fill("#374151").fontSize(7.5).font("Helvetica")
+        .text(c.category || "—", cx + 4, textY, { width: cols[3].w - 6 });
+      cx += cols[3].w;
+
+      const priColor = c.priority === "High" ? "#dc2626" : c.priority === "Medium" ? "#d97706" : "#16a34a";
+      const priBg    = c.priority === "High" ? "#fee2e2" : c.priority === "Medium" ? "#fef3c7" : "#dcfce7";
+      doc.rect(cx + 3, textY - 2, cols[4].w - 8, 14).fill(priBg);
+      doc.fill(priColor).fontSize(7).font("Helvetica-Bold")
+        .text(c.priority || "—", cx + 3, textY + 1, { width: cols[4].w - 8, align: "center" });
+      cx += cols[4].w;
+
+      doc.fill("#374151").fontSize(7.5).font("Helvetica")
+        .text(c.assigned_to || "Not Assigned", cx + 4, textY, { width: cols[5].w - 6, ellipsis: true });
+      cx += cols[5].w;
+
+      const stColor = c.status === "Resolved" ? "#15803d" : c.status === "In Progress" ? "#1d4ed8" : "#92400e";
+      const stBg    = c.status === "Resolved" ? "#dcfce7" : c.status === "In Progress" ? "#dbeafe" : "#fef9c3";
+      doc.rect(cx + 2, textY - 2, cols[6].w - 6, 14).fill(stBg).stroke(stColor);
+      doc.fill(stColor).fontSize(6.5).font("Helvetica-Bold")
+        .text(c.status, cx + 2, textY + 1, { width: cols[6].w - 6, align: "center" });
+      cx += cols[6].w;
+
+      doc.fill("#6b7280").fontSize(7).font("Helvetica")
+        .text(new Date(c.created_at).toLocaleDateString("en-IN"), cx + 4, textY, { width: cols[7].w - 6 });
+
+      y += rowH;
+    });
+
+    if (complaints.length === 0) {
+      doc.moveDown(2);
+      doc.fontSize(14).fill("#6b7280").text("No complaints found.", { align: "center" });
+    }
+
+    // ── FOOTER ──
+    const footerY = H - 35;
+    doc.rect(0, footerY, W, 35).fill("#4f46e5");
+    doc.fill("#fff").fontSize(8).font("Helvetica")
+      .text("© 2026 College Complaints Redressal System  |  Admin Report  |  Confidential",
+        ML, footerY + 13, { align: "center", width: CW });
+
+    doc.end();
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: error.message });
