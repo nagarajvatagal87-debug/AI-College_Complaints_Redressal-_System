@@ -1,18 +1,17 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import adminPhoto from "../assets/admin-photo.jpg.jpeg";
 
 const NAV = [
-  { to: "/admin-dashboard",         icon: "📊", label: "Dashboard" },
-  { to: "/admin/complaints",        icon: "📋", label: "All Complaints" },
-  { to: "/admin/students",          icon: "👨‍🎓", label: "Manage Students" },
-  { to: "/admin/staff",             icon: "👨‍🏫", label: "Manage Staff" },
-  { to: "/admin/assigned",          icon: "✅", label: "Assigned Staff" },
-  { to: "/admin/reports",           icon: "📈", label: "Reports" },
-  { to: "/admin/sentiment",         icon: "🤖", label: "AI Sentiment" },
-  { to: "/admin/notifications",     icon: "🔔", label: "Notifications" },
-  { to: "/admin/classroom-qr",      icon: "📷", label: "Classroom QR" },
-  { to: "/admin/profile",           icon: "👤", label: "Profile" },
-  { to: "/admin/settings",          icon: "⚙️", label: "Settings" },
+  { to: "/admin-dashboard",     icon: "📊", label: "Dashboard" },
+  { to: "/admin/complaints",    icon: "📋", label: "All Complaints" },
+  { to: "/admin/students",      icon: "👨‍🎓", label: "Manage Students" },
+  { to: "/admin/staff",         icon: "👨‍🏫", label: "Manage Staff" },
+  { to: "/admin/assigned",      icon: "✅", label: "Assigned Staff" },
+  { to: "/admin/reports",       icon: "📈", label: "Reports" },
+  { to: "/admin/sentiment",     icon: "🤖", label: "AI Sentiment" },
+  { to: "/admin/notifications", icon: "🔔", label: "Notifications" },
+  { to: "/admin/classroom-qr",  icon: "📷", label: "Classroom QR" },
+  { to: "/admin/profile",       icon: "👤", label: "Profile" },
+  { to: "/admin/settings",      icon: "⚙️", label: "Settings" },
 ];
 
 function AdminLayout({ children }) {
@@ -49,8 +48,9 @@ function AdminLayout({ children }) {
           borderBottom: "1px solid rgba(255,255,255,0.07)",
           textAlign: "center",
         }}>
-          <div style={{ fontSize: 13.5, fontWeight: 700, color: "#fff" }}>CampusVoice AI</div>
-          <div style={{ fontSize: 10, color: "#64748b", marginTop: 2 }}>Complaint Redressal</div>
+          <img src="/logo.png"alt="logo" style={{ width: 55, height: 55, borderRadius: 12, objectFit: "cover", margin: "0 auto 6px", display: "block" }} />
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#fff", textAlign: "center" }}>College Complaints</div>
+          <div style={{ fontSize: 9, color: "#a5b4fc", marginTop: 1, textAlign: "center" }}>Redressal System</div>
         </div>
 
         {/* Profile */}
@@ -61,7 +61,7 @@ function AdminLayout({ children }) {
           background: "rgba(255,255,255,0.03)",
         }}>
           <img
-            src={adminPhoto}
+            src="/images/nagaraj.png"
             width="60" height="60"
             alt="Admin"
             style={{ borderRadius: "50%", objectFit: "cover", border: "2.5px solid #6366f1" }}

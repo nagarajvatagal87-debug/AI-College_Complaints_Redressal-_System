@@ -10,7 +10,7 @@ export default function AdminSettings() {
     staffNotifications: true,
     autoAssign: true,
     aiSentiment: true,
-    systemName: "CampusVoice AI",
+    systemName: "College Complaints Redressal system",
   });
 
   const handleSave = () => {

@@ -19,15 +19,10 @@ export default function HomePage() {
       {/* Header */}
       <header className="hp-header">
         <div className="hp-brand">
-          <div className="hp-brand-logo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" width="20" height="20">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-            </svg>
-          </div>
+          <img src="/logo.png" alt="CampusVoice AI" style={{ width: 44, height: 44, borderRadius: 10, objectFit: "cover" }} />
           <div>
-            <div className="hp-brand-name">AI College Complaints System</div>
-            <div className="hp-brand-sub">Smart Complaint Redressal System</div>
+            <div className="hp-brand-name">College Complaints Redressal System</div>
+            <div className="hp-brand-sub">Smart AI-Powered Complaint Management</div>
           </div>
         </div>
         <div className="hp-header-right">
@@ -41,12 +36,25 @@ export default function HomePage() {
 
         {/* Hero */}
         <div className="hp-hero">
+          {/* Logo center */}
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}>
+            <img src="/logo.png" alt="CampusVoice AI Logo"
+              style={{
+                width: 140, height: 140,
+                borderRadius: 24,
+                objectFit: "cover",
+                boxShadow: "0 0 40px rgba(99,102,241,0.5), 0 0 80px rgba(99,102,241,0.2)",
+                border: "2px solid rgba(99,102,241,0.4)"
+              }}
+            />
+          </div>
+
           <div className="hp-hero-pill">
             <span className="hp-pill-dot"></span>
             AI · Voice Input · Real-time Tracking
           </div>
           <h1 className="hp-title">
-            Choose Your <span className="hp-title-grad">Portal</span>
+            College Complaints <span className="hp-title-grad">Redressal System</span>
           </h1>
           <p className="hp-subtitle">Select your role to access the system</p>
         </div>
@@ -72,7 +80,7 @@ export default function HomePage() {
                 <span className="hp-tag hp-tag-blue">✓ Track</span>
                 <span className="hp-tag hp-tag-blue">✓ AI Priority</span>
                 <span className="hp-tag hp-tag-blue">✓ Voice</span>
-                    <span className="hp-tag hp-tag-blue">✓ Rating & Feedback</span>
+                <span className="hp-tag hp-tag-blue">✓ Rating & Feedback</span>
               </div>
               <button className="hp-btn hp-btn-blue">
                 Student Login
@@ -98,10 +106,9 @@ export default function HomePage() {
               <p className="hp-card-desc">Manage all complaints, assign staff and view detailed analytics</p>
               <div className="hp-tags">
                 <span className="hp-tag hp-tag-red">✓ All Complaints</span>
-                <span className="hp-tag hp-tag-red">✓  AI Assign Staff</span>
+                <span className="hp-tag hp-tag-red">✓ AI Assign Staff</span>
                 <span className="hp-tag hp-tag-red">✓ Complaint Details</span>
                 <span className="hp-tag hp-tag-red">✓ Export</span>
-              
               </div>
               <button className="hp-btn hp-btn-red">
                 Admin Login
@@ -140,20 +147,43 @@ export default function HomePage() {
           </div>
 
         </div>
+
+        {/* Features strip */}
+        <div style={{
+          display: "flex", justifyContent: "center", gap: 32,
+          marginTop: 40, flexWrap: "wrap"
+        }}>
+          {[
+            { icon: "📧", label: "Email Notifications", desc: "Auto emails on every update" },
+            { icon: "🤖", label: "AI Staff Assignment", desc: "Smart keyword-based routing" },
+            { icon: "📊", label: "PDF Reports", desc: "Download complaint reports" },
+            { icon: "📱", label: "QR Tracking", desc: "Scan to track complaint" },
+            { icon: "🎙️", label: "Voice Input", desc: "Speak your complaint" },
+          ].map((f, i) => (
+            <div key={i} style={{
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+              background: "rgba(255,255,255,0.05)", borderRadius: 12,
+              padding: "14px 20px", border: "1px solid rgba(99,102,241,0.2)",
+              minWidth: 120, textAlign: "center"
+            }}>
+              <span style={{ fontSize: 24 }}>{f.icon}</span>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>{f.label}</div>
+              <div style={{ fontSize: 10, color: "#94a3b8" }}>{f.desc}</div>
+            </div>
+          ))}
+        </div>
+
       </main>
 
       {/* Footer */}
       <footer className="hp-footer">
         <div className="hp-footer-brand">
-          <div className="hp-footer-logo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" width="13" height="13">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-            </svg>
-          </div>
-      AI College Complaints Redressal System
+          <img src="/logo.png" alt="logo" style={{ width: 20, height: 20, borderRadius: 4, objectFit: "cover", marginRight: 6 }} />
+          College Complaints Redressal System
         </div>
-        <div className="hp-footer-copy"><b>© 2026 CampusVoice AI — Smart Complaint Redressal System. All rights reserved.</b></div>
+        <div className="hp-footer-copy">
+          <b>© 2026 College Complaints Redressal System — AI-Powered. All rights reserved.</b>
+        </div>
       </footer>
 
     </div>
