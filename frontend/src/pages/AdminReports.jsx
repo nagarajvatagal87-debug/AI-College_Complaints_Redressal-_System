@@ -28,14 +28,37 @@ export default function AdminReports() {
       const res = await fetch(`${API_URL}/api/admin/report/download`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+
+      if (!res.ok) {
+        let message = `Failed to download report (status ${res.status}).`;
+        try {
+          const errData = await res.json();
+          if (errData?.message) message = errData.message;
+        } catch { /* response wasn't JSON, keep default message */ }
+        alert(`❌ ${message}`);
+        return;
+      }
+
       const blob = await res.blob();
+      if (blob.type && !blob.type.includes("pdf")) {
+        alert("❌ Server did not return a valid PDF. Check the backend terminal for errors.");
+        return;
+      }
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = "CampusVoice_Admin_Report.pdf";
+      document.body.appendChild(a);
       a.click();
-    } catch (err) { alert("Error downloading report"); }
-    finally { setDownloading(false); }
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("❌ Error downloading report. Please check your connection.");
+    } finally {
+      setDownloading(false);
+    }
   };
 
   return (
