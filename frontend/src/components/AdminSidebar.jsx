@@ -1,5 +1,4 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import adminPhoto from "../assets/admin-photo.jpg.jpeg";
 
 const NAV = [
   { to:"/admin-dashboard",     icon:"📊", label:"Dashboard"       },
@@ -41,25 +40,18 @@ export default function AdminSidebar({ collapsed, setCollapsed }) {
         borderBottom:"1px solid rgba(255,255,255,0.08)",
         flexShrink:0, cursor:"pointer",
       }} onClick={() => setCollapsed(c => !c)}>
-        <div style={{
+        <img src="/logo.png" alt="logo" style={{
           width:42, height:42, flexShrink:0,
-          background:"linear-gradient(135deg,#6366f1,#8b5cf6)",
-          borderRadius:12,
-          display:"flex", alignItems:"center", justifyContent:"center",
+          borderRadius:10, objectFit:"cover",
           boxShadow:"0 4px 14px rgba(99,102,241,0.5)",
-        }}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" width="22" height="22">
-            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-          </svg>
-        </div>
+        }}/>
         {!collapsed && (
           <div>
-            <div style={{ fontSize:15, fontWeight:800, color:"#fff", whiteSpace:"nowrap", letterSpacing:0.3 }}>
-             AI College Complaints 
+            <div style={{ fontSize:13, fontWeight:800, color:"#fff", whiteSpace:"nowrap", letterSpacing:0.3 }}>
+              College Complaints
             </div>
-            <div style={{ fontSize:15, color:"#dfe3e9", whiteSpace:"nowrap", marginTop:2 }}>
-             Redressal System
+            <div style={{ fontSize:11, color:"#a5b4fc", whiteSpace:"nowrap", marginTop:2 }}>
+              Redressal System
             </div>
           </div>
         )}
@@ -73,7 +65,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }) {
         borderBottom:"1px solid rgba(255,255,255,0.08)",
         background:"rgba(255,255,255,0.03)", flexShrink:0,
       }}>
-        <img src={adminPhoto} width="46" height="46" alt="Admin"
+        <img src="/images/nagaraj.png" width="46" height="46" alt="Admin"
           style={{ borderRadius:"50%", objectFit:"cover", border:"2.5px solid #6366f1", flexShrink:0 }}
           onError={e => {
             e.target.style.display = "none";
