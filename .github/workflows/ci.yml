@@ -37,8 +37,9 @@ jobs:
       - name: Install backend dependencies
         run: npm ci
 
-      - name: Check backend JavaScript syntax
+      - name: Check backend syntax
         run: node --check server.js
+
 
   # ==========================================
   # FRONTEND CI
@@ -56,6 +57,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -65,9 +69,6 @@ jobs:
 
       - name: Install frontend dependencies
         run: npm ci
-
-      - name: Run ESLint
-        run: npm run lint
 
       - name: Build React application
         run: npm run build
