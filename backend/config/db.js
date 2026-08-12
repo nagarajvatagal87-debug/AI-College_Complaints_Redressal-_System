@@ -11,19 +11,4 @@ export const db = mysql.createPool({
   database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 10000,
-  connectTimeout: 20000,
 });
-
-db.getConnection()
-  .then((connection) => {
-    console.log("✅ MYSQL CONNECTED SUCCESSFULLY");
-    connection.release();
-  })
-  .catch((error) => {
-    console.error("❌ MYSQL CONNECTION FAILED");
-    console.error("Code:", error.code);
-    console.error("Message:", error.message);
-  });
